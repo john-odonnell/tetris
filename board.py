@@ -13,44 +13,76 @@ class Board:
         (0, 0) on the Tetris board corresponds
         to the bottom left corner """
 
-    def __init__(self):
-        self.board = np.ndarray((10, 20), dtype=bool)
+    def __init__(self, board: list):
+        self.board = board
+        self.height = len(board)
+        self.width = len(board[0])
+        self.row_population = []
+        self.col_population = []
 
-        for i in range(0, 10):
-            for j in range(0, 20):
-                self.board[i][j] = False
+        # fills the population matrices with 0s on init
+        for i in range(0, len(board)):
+            self.col_population.append(0)
+        for j in range(0, len(board[0])):
+            self.row_population.append(0)
 
-        self.widths = np.zeros((1, 20), dtype=int)
-        self.heights = np.zeros((1, 10), dtype=int)
+    def _collision_code(self, piece: pc.Piece, x: int, y: int):
+        """ Returns True if the piece can be placed at the given (x,y) """
+        # checks each block of the piece against its corresponding board position
+        for i in range(len(piece.currentBody)):
+            for j in range(len(piece.currentBody[0])):
+                if self.board[y + i][x + j] != 0 and piece.currentBody[i][j] != 0:
+                    return True
+        return False
 
-    def place(self, piece: pc.Piece, x: int, y: int):
+    def drop_check(self, piece: pc.Piece):
+        """ Returns True if the piece can drop one row """
+        return not self._collision_code(piece, piece.x, piece.y + 1)
+
+    def move_check_left(self, piece: pc.Piece):
+        """ Returns True if the piece can move to the left one column """
+        return not self._collision_code(piece, piece.x - 1, piece.y)
+
+    def move_check_right(self, piece: pc.Piece):
+        """ Returns True if the piece can move to the right one column """
+        return not self._collision_code(piece, piece.x + 1, piece.y)
+
+    def check_collision(self, piece: pc.Piece, x: int, y: int):
+        """ Returning True indicates collision/invalid placement """
+        return self._collision_code(piece, piece.x, piece.y)
+
+    def place(self, piece: pc.Piece):
         """ Places a given Tetris piece at the given xy coordinates """
-        rows = piece.body.shape[0]
-        cols = piece.body.shape[1]
+        if not self.check_collision(piece, piece.x, piece.y):
+            x = piece.x
+            y = piece.y
 
-        for i in range(0, rows):
-            for j in range(0, cols):
-                if piece.body[i][j] == 1:
-                    self.board[x + i][y + j] = True
+            for i in range(len(piece.currentBody)):
+                for j in range(len(piece.currentBody[0])):
+                    if piece.currentBody[i][j] != 0:
+                        self.board[y + i][x + j] = piece.currentBody[i][j]
 
-    def _update_heights(self):
-        """ Updates the array of heights """
-        for i in range(0, 10):
-            self.heights[i] = self.heights[i] - 1
-        return
+    def update_populations(self):
+        """ Updates the population matricies to assist row clearing and EOG """
+        for i in range(self.height):
+            pop = 0
+            for j in range(self.width):
+                if self.board[i][j] != 0:
+                    pop = pop + 1
+            self.row_population[i] = pop
 
-    def _update_widths(self, row_removed: int):
-        """ Updates the array of widths """
-        for i in range(row_removed, 19):
-            self.widths[i] = self.widths[i+1]
-        self.widths[19] = 0
-        return
+        for j in range(self.width):
+            pop = 0
+            for i in range(self.height):
+                if self.board[i][j] != 0:
+                    pop = pop + 1
+            self.col_population[j] = pop
 
-    def _check_full(self):
+    def _check_full(self) -> list:
         """ Returns a list of rows in the board that are filled """
         rows = []
-        for i in range(0, np.ndarray.max(self.heights)):
-            if self.widths[i] == 10:
+        for i in range(self.height):
+            if self.row_population[i] == 10:
                 rows.append(i)
         return rows
 
