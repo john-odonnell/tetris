@@ -18,8 +18,6 @@ class Piece:
         self.currentBody = bodies[self.currentIndex]
 
         # coordinates on the board
-
-
         self.x = x
         self.y = y
 
@@ -54,7 +52,7 @@ class Piece:
         return self.currentBody
 
     def get_id(self) -> int:
-        return self.id
+        return self.pieceId
 
     """ Game Functions """
     def rotate_right(self):

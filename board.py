@@ -17,8 +17,9 @@ class Board:
         self.board = board
         self.height = len(board)
         self.width = len(board[0])
-        self.row_population = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 12]
-        self.col_population = [22, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 22]
+        self.row_population = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 14]
+        self.col_population = [22, 22, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 22, 22]
+        self.score = 0
 
         # fills the population matrices with 0s on init
         for i in range(0, len(board)):
@@ -87,9 +88,20 @@ class Board:
         """ Returns a list of rows in the board that are filled """
         rows = []
         for i in range(self.height - 1):
-            if self.row_population[i] == 12:
+            if self.row_population[i] == 14:
                 rows.append(i)
         return rows
+
+    def update_score(self, rows_cleared: int):
+        if rows_cleared == 1:
+            self.score = self.score + 40
+        elif rows_cleared == 2:
+            self.score = self.score + 100
+        elif rows_cleared == 3:
+            self.score = self.score + 300
+        elif rows_cleared == 4:
+            self.score = self.score + 1200
+        return
 
     def clear_rows(self):
         """ Clears the filled rows on the board """
@@ -98,5 +110,7 @@ class Board:
         for i in to_clear:
             for j in range(1, i + 1):
                 self.board[i - j + 1] = self.board[i - j]
-            self.board[0] = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+            self.board[0] = [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1]
+        self.update_score(len(to_clear))
+        self.update_populations()
         return

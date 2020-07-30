@@ -8,7 +8,7 @@ BLOCK_SIZE = 25
 """ Initialize Pygame, constant screen and surfaces """
 pygame.init()
 # (0,0) is the top left corner of the screen
-screen = pygame.display.set_mode((12*BLOCK_SIZE, 22*BLOCK_SIZE))
+screen = pygame.display.set_mode((10*BLOCK_SIZE, 21*BLOCK_SIZE))
 # board and piece surface are responsible for drawing their own components
 # and updating when need be
 # board_surface = pygame.Surface((12*BLOCK_SIZE, 22*BLOCK_SIZE))
@@ -18,28 +18,28 @@ screen = pygame.display.set_mode((12*BLOCK_SIZE, 22*BLOCK_SIZE))
     The board has a rim on the left and right of 0s, and 1s on the bottom
     This is to facilitate piece hit-boxes extending past the playable game board """
 sample_board = [
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ]
 
 # initialize board abstraction
@@ -208,6 +208,16 @@ z_bodies = [
 # hosts all piece body lists
 bodies = [i_bodies, j_bodies, l_bodies, o_bodies, s_bodies, t_bodies, z_bodies]
 
+color_key = {
+    1: (  0, 240, 240),
+    2: (  0,   0, 240),
+    3: (240, 150,   0),
+    4: (240, 240,   0),
+    5: (  0, 240,   0),
+    6: (150,   0, 240),
+    7: (240,   0,   0)
+}
+
 
 def draw_stdout():
     """ Draws the Tetris board state to stdout for debugging purposes """
@@ -222,11 +232,11 @@ def draw_stdout():
 
 def draw_board(board_surface: pygame.Surface):
     """ Draws the board onto the board surface """
-    for j in range(board_class.height):
-        for i in range(board_class.width):
+    for j in range(board_class.height - 1):
+        for i in range(2, board_class.width - 2):
             if board_class.board[j][i] != 0:
-                pygame.draw.rect(board_surface, (255, 255, 255),
-                                 (i * BLOCK_SIZE, j * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
+                pygame.draw.rect(board_surface, color_key[board_class.board[j][i]],
+                                 ((i-2) * BLOCK_SIZE, j * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
 
 
 def draw_piece(piece: pc.Piece, piece_surface: pygame.Surface):
@@ -234,8 +244,8 @@ def draw_piece(piece: pc.Piece, piece_surface: pygame.Surface):
     for j in range(len(piece.currentBody)):
         for i in range(len(piece.currentBody[0])):
             if piece.currentBody[j][i] != 0:
-                pygame.draw.rect(piece_surface, (255, 255, 255),
-                                 ((piece.x * BLOCK_SIZE) + (i * BLOCK_SIZE),
+                pygame.draw.rect(piece_surface, color_key[piece.get_id()],
+                                 (((piece.x-2) * BLOCK_SIZE) + (i * BLOCK_SIZE),
                                   ((piece.y * BLOCK_SIZE) + (j * BLOCK_SIZE)),
                                   BLOCK_SIZE, BLOCK_SIZE))
 
@@ -245,7 +255,7 @@ def game_loop():
         Contains event handling and calls to piece and board classes """
     playing = True
     # frequency defined in milliseconds
-    drop_freq = 500
+    drop_freq = 200
     maxfps = 30
 
     dontburn = pygame.time.Clock()
@@ -253,7 +263,7 @@ def game_loop():
     pygame.time.set_timer(DROPEVENT, drop_freq)
 
     id_next = rand.randint(0, 6)
-    next_piece = pc.Piece(id_next, bodies[id_next], 3, 0)
+    next_piece = pc.Piece(id_next+1, bodies[id_next], 3, 0)
 
     while playing:
 
@@ -262,9 +272,9 @@ def game_loop():
         piece = next_piece
         # creat next piece
         id_next = rand.randint(0, 6)
-        next_piece = pc.Piece(id_next, bodies[id_next], 3, 0)
+        next_piece = pc.Piece(id_next+1, bodies[id_next], 7, 0)
 
-        board_surface = pygame.Surface((12 * BLOCK_SIZE, 22 * BLOCK_SIZE))
+        board_surface = pygame.Surface((10 * BLOCK_SIZE, 21 * BLOCK_SIZE))
         draw_board(board_surface)
 
         falling = True
@@ -272,7 +282,7 @@ def game_loop():
             # establish background
             screen.fill((0, 0, 0))
             # create black piece surface
-            piece_surface = pygame.Surface((12 * BLOCK_SIZE, 22 * BLOCK_SIZE))
+            piece_surface = pygame.Surface((10 * BLOCK_SIZE, 21 * BLOCK_SIZE))
 
             # draw board and then piece
             draw_board(board_surface)
@@ -287,6 +297,8 @@ def game_loop():
                 if event.type == pygame.QUIT:
                     falling = False
                     playing = False
+                    print("Score: ", end="")
+                    print(board_class.score)
                     pygame.quit()
                     exit()
                 elif event.type == DROPEVENT:
