@@ -1,0 +1,10 @@
+# ignore Pipfiles
+Pipfile
+Pipfile.lock
+
+# ignore virtual environment directory and files
+venv
+.python-version
+
+.idea
+__pycache__
