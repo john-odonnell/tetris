@@ -17,8 +17,8 @@ class Board:
         self.board = board
         self.height = len(board)
         self.width = len(board[0])
-        self.row_population = []
-        self.col_population = []
+        self.row_population = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 12]
+        self.col_population = [22, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 22]
 
         # fills the population matrices with 0s on init
         for i in range(0, len(board)):
@@ -45,7 +45,12 @@ class Board:
 
     def move_check_right(self, piece: pc.Piece):
         """ Returns True if the piece can move to the right one column """
-        return not self._collision_code(piece, piece.x + 1, piece.y)
+        flag = True
+        try:
+            flag = self._collision_code(piece, piece.x + 1, piece.y)
+        except IndexError:
+            pass
+        return not flag
 
     def check_collision(self, piece: pc.Piece, x: int, y: int):
         """ Returning True indicates collision/invalid placement """
@@ -71,36 +76,27 @@ class Board:
                     pop = pop + 1
             self.row_population[i] = pop
 
-        for j in range(self.width):
-            pop = 0
-            for i in range(self.height):
-                if self.board[i][j] != 0:
-                    pop = pop + 1
-            self.col_population[j] = pop
+        # for j in range(self.width):
+        #     pop = 0
+        #     for i in range(self.height):
+        #         if self.board[i][j] != 0:
+        #             pop = pop + 1
+        #     self.col_population[j] = pop
 
     def _check_full(self) -> list:
         """ Returns a list of rows in the board that are filled """
         rows = []
-        for i in range(self.height):
-            if self.row_population[i] == 10:
+        for i in range(self.height - 1):
+            if self.row_population[i] == 12:
                 rows.append(i)
         return rows
 
-    def _clear_rows(self, rows: list):
-        """ Recursively eliminates rows from the board """
-        self._clear_rows(rows[1:])
-
-        if len(rows) != 0:
-            row = rows[0]
-
-            for i in range(row, np.ndarray.max(self.heights)):
-                self.board[row][i] = self.board[row][i+1]
-
-            self._update_heights()
-            self._update_widths(row)
-        return
-
     def clear_rows(self):
         """ Clears the filled rows on the board """
-        self._clear_rows(self._check_full())
+        # self._clear_rows(self._check_full())
+        to_clear = self._check_full()
+        for i in to_clear:
+            for j in range(1, i + 1):
+                self.board[i - j + 1] = self.board[i - j]
+            self.board[0] = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
         return
