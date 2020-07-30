@@ -1,4 +1,3 @@
-import numpy as np
 import piece as pc
 
 """ Board Class
