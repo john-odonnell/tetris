@@ -18,6 +18,8 @@ class Piece:
         self.currentBody = bodies[self.currentIndex]
 
         # coordinates on the board
+
+
         self.x = x
         self.y = y
 
@@ -65,9 +67,9 @@ class Piece:
         self.currentIndex = (self.currentIndex - 1) % 4
         self.currentBody = self.bodies[self.currentIndex]
 
-    def drop(self, speed: int):
+    def drop(self):
         """ Changes the y position of the Piece according to level speed """
-        self.y = self.y + speed
+        self.y = self.y + 1
 
     def move_left(self):
         """ Moves the piece one block to the left """
