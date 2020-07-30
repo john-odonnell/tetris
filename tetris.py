@@ -39,6 +39,7 @@ sample_board = [
     [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
     [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
     [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ]
 
@@ -209,11 +210,11 @@ z_bodies = [
 bodies = [i_bodies, j_bodies, l_bodies, o_bodies, s_bodies, t_bodies, z_bodies]
 
 color_key = {
-    1: (  0, 240, 240),
-    2: (  0,   0, 240),
+    1: (0,   240, 240),
+    2: (0,     0, 240),
     3: (240, 150,   0),
     4: (240, 240,   0),
-    5: (  0, 240,   0),
+    5: (0,   240,   0),
     6: (150,   0, 240),
     7: (240,   0,   0)
 }
@@ -232,11 +233,11 @@ def draw_stdout():
 
 def draw_board(board_surface: pygame.Surface):
     """ Draws the board onto the board surface """
-    for j in range(board_class.height - 1):
+    for j in range(1, board_class.height - 1):
         for i in range(2, board_class.width - 2):
             if board_class.board[j][i] != 0:
                 pygame.draw.rect(board_surface, color_key[board_class.board[j][i]],
-                                 ((i-2) * BLOCK_SIZE, j * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
+                                 ((i-2) * BLOCK_SIZE, (j-1) * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
 
 
 def draw_piece(piece: pc.Piece, piece_surface: pygame.Surface):
@@ -246,8 +247,16 @@ def draw_piece(piece: pc.Piece, piece_surface: pygame.Surface):
             if piece.currentBody[j][i] != 0:
                 pygame.draw.rect(piece_surface, color_key[piece.get_id()],
                                  (((piece.x-2) * BLOCK_SIZE) + (i * BLOCK_SIZE),
-                                  ((piece.y * BLOCK_SIZE) + (j * BLOCK_SIZE)),
+                                  (((piece.y-1) * BLOCK_SIZE) + (j * BLOCK_SIZE)),
                                   BLOCK_SIZE, BLOCK_SIZE))
+
+
+def game_over():
+    """ Displays 'Game Over' Message and Score """
+    print("Game Over!\nScore: ", end="")
+    print(board_class.score)
+
+    return
 
 
 def game_loop():
@@ -263,16 +272,16 @@ def game_loop():
     pygame.time.set_timer(DROPEVENT, drop_freq)
 
     id_next = rand.randint(0, 6)
-    next_piece = pc.Piece(id_next+1, bodies[id_next], 3, 0)
+    next_piece = pc.Piece(id_next+1, bodies[id_next], 5, 0)
 
     while playing:
 
         # assign this piece from next piece
-        piece_id = id_next
+        # piece_id = id_next
         piece = next_piece
         # creat next piece
         id_next = rand.randint(0, 6)
-        next_piece = pc.Piece(id_next+1, bodies[id_next], 7, 0)
+        next_piece = pc.Piece(id_next+1, bodies[id_next], 5, 0)
 
         board_surface = pygame.Surface((10 * BLOCK_SIZE, 21 * BLOCK_SIZE))
         draw_board(board_surface)
@@ -297,7 +306,7 @@ def game_loop():
                 if event.type == pygame.QUIT:
                     falling = False
                     playing = False
-                    print("Score: ", end="")
+                    print("Game Quit!\nScore: ", end="")
                     print(board_class.score)
                     pygame.quit()
                     exit()
@@ -309,22 +318,41 @@ def game_loop():
                         falling = False
                 elif event.type == pygame.KEYDOWN:
                     # keypress events
+                    # translation logic
                     if event.key == pygame.K_a and board_class.move_check_left(piece):
                         piece.move_left()
                     elif event.key == pygame.K_d and board_class.move_check_right(piece):
                         piece.move_right()
+                    # rotation logic
                     elif event.key == pygame.K_s:
+                        while board_class.rotate_check(piece, 0):
+                            if piece.x < 6:
+                                piece.move_right()
+                            else:
+                                piece.move_left()
                         piece.rotate_right()
                     elif event.key == pygame.K_w:
+                        while board_class.rotate_check(piece, 1):
+                            if piece.x < 6:
+                                piece.move_right()
+                            else:
+                                piece.move_left()
                         piece.rotate_left()
 
             piece_surface.fill((0, 0, 0, 0))
+
+            if not board_class.drop_check(piece):
+                falling = False
 
             dontburn.tick(maxfps)
 
         board_class.place(piece)
         board_class.update_populations()
         board_class.clear_rows()
+
+        if board_class.end_of_game():
+            playing = False
+            game_over()
 
     return
 

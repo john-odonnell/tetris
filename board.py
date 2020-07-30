@@ -17,15 +17,11 @@ class Board:
         self.board = board
         self.height = len(board)
         self.width = len(board[0])
-        self.row_population = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 14]
-        self.col_population = [22, 22, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 22, 22]
+        self.row_population = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 14]
+        self.heights = [23, 23, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 23, 23]
         self.score = 0
 
-        # fills the population matrices with 0s on init
-        for i in range(0, len(board)):
-            self.col_population.append(0)
-        for j in range(0, len(board[0])):
-            self.row_population.append(0)
+        self.game_over = False
 
     def _collision_code(self, piece: pc.Piece, x: int, y: int):
         """ Returns True if the piece can be placed at the given (x,y) """
@@ -35,6 +31,22 @@ class Board:
                 if self.board[y + i][x + j] != 0 and piece.currentBody[i][j] != 0:
                     return True
         return False
+
+    def rotate_check(self, piece: pc.Piece, direction: int):
+        """ Checks if a piece is making a valid rotation
+            direction: 0=clockwise, 1=counterclockwise """
+        valid = True
+
+        if direction == 0:
+            piece.rotate_right()
+            valid = self._collision_code(piece, piece.x, piece.y)
+            piece.rotate_left()
+        elif direction == 1:
+            piece.rotate_left()
+            valid = self._collision_code(piece, piece.x, piece.y)
+            piece.rotate_right()
+
+        return valid
 
     def drop_check(self, piece: pc.Piece):
         """ Returns True if the piece can drop one row """
@@ -69,7 +81,7 @@ class Board:
                         self.board[y + i][x + j] = piece.currentBody[i][j]
 
     def update_populations(self):
-        """ Updates the population matricies to assist row clearing and EOG """
+        """ Updates the population and height matrices to assist row clearing and EOG """
         for i in range(self.height):
             pop = 0
             for j in range(self.width):
@@ -77,12 +89,15 @@ class Board:
                     pop = pop + 1
             self.row_population[i] = pop
 
-        # for j in range(self.width):
-        #     pop = 0
-        #     for i in range(self.height):
-        #         if self.board[i][j] != 0:
-        #             pop = pop + 1
-        #     self.col_population[j] = pop
+        for j in range(self.width):
+            height = 0
+            while True:
+                if self.board[height][j] != 0:
+                    self.heights[j] = height
+                    break
+                height = height + 1
+
+        return
 
     def _check_full(self) -> list:
         """ Returns a list of rows in the board that are filled """
@@ -93,6 +108,7 @@ class Board:
         return rows
 
     def update_score(self, rows_cleared: int):
+        """ Updates score based on the number of lines cleared at once """
         if rows_cleared == 1:
             self.score = self.score + 40
         elif rows_cleared == 2:
@@ -114,3 +130,10 @@ class Board:
         self.update_score(len(to_clear))
         self.update_populations()
         return
+
+    def end_of_game(self):
+        """ Determines if the board is in an EOG state """
+        for i in range(2, len(self.heights) - 2):
+            if self.heights[i] <= 2:
+                self.game_over = True
+        return self.game_over
