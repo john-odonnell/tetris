@@ -265,11 +265,16 @@ def game_loop():
     playing = True
     # frequency defined in milliseconds
     drop_freq = 200
+    move_freq = 75
     maxfps = 30
 
-    dontburn = pygame.time.Clock()
+    fps_tick = pygame.time.Clock()
+
     DROPEVENT = pygame.USEREVENT
+    MOVEEVENT = pygame.USEREVENT + 1
+
     pygame.time.set_timer(DROPEVENT, drop_freq)
+    pygame.time.set_timer(MOVEEVENT, move_freq)
 
     id_next = rand.randint(0, 6)
     next_piece = pc.Piece(id_next+1, bodies[id_next], 5, 0)
@@ -316,15 +321,18 @@ def game_loop():
                         piece.drop()
                     else:
                         falling = False
+                elif event.type == MOVEEVENT:
+                    # translation logic
+                    # get_pressed() used for fluid translation
+                    keys = pygame.key.get_pressed()
+                    if keys[pygame.K_a] and board_class.move_check_left(piece):
+                        piece.move_left()
+                    elif keys[pygame.K_d] and board_class.move_check_right(piece):
+                        piece.move_right()
                 elif event.type == pygame.KEYDOWN:
                     # keypress events
-                    # translation logic
-                    if event.key == pygame.K_a and board_class.move_check_left(piece):
-                        piece.move_left()
-                    elif event.key == pygame.K_d and board_class.move_check_right(piece):
-                        piece.move_right()
                     # rotation logic
-                    elif event.key == pygame.K_s:
+                    if event.key == pygame.K_s:
                         while board_class.rotate_check(piece, 0):
                             if piece.x < 6:
                                 piece.move_right()
@@ -344,7 +352,7 @@ def game_loop():
             if not board_class.drop_check(piece):
                 falling = False
 
-            dontburn.tick(maxfps)
+            fps_tick.tick(maxfps)
 
         board_class.place(piece)
         board_class.update_populations()
